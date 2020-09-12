@@ -1,8 +1,38 @@
 ---
 - hosts: localhost
   tasks:
-     - name: Check if kubectl is installed
-       shell: kubectl version
+    - name: Ensure minikube is installed
+      package:
+        name: minikube
+        state: present
+
+    - name: Ensure kubectl is installed
+      package:
+        name: kubectl
+        state: present
+
+    - name: Deploy elasticsearch
+      shell: kubectl apply -f elasticsearch
+
+    - name: Start elasticsearch
+      shell: kubectl port-forward service/elasticsearch 9200 >/dev/null 2>&1 &
+
+    - name: Deploy kibana
+      shell: kubectl apply -f kibana
+
+    - name: Satrt kibana
+      shell: kubectl port-forward service/kibana 9200 >/dev/null 2>&1 &
+
+    - name: Setup index templates and dashboards
+      shell: kubectl apply -f beats-index
+
+
+
+     # - name: Check if kubectl is installed
+     #   shell: kubectl version
+
+
+
 
      # - name: Stop ypbind to add local users
      #   with_items: "{{ inventory_hostname }}"
