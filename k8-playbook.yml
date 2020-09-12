@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  become: yes
   tasks:
      - name: Check if kubectl is installed
        shell: kubectl version
