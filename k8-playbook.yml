@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+     - name: Check if kubectl is installed
+       shell: kubectl version
+
+     # - name: Stop ypbind to add local users
+     #   with_items: "{{ inventory_hostname }}"
+     #   when: not item is search ("nsdiag.*sjc.*") #For skipping nsdiag[1-2].sjc servers from this task
+     #   service:
+     #     name: ypbind
+     #     state: stopped
+     #   ignore_errors: yes
