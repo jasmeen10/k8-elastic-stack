@@ -6,6 +6,9 @@
         name: minikube
         state: present
 
+    - name: Start minikube on hyperkit
+      shell: minikube start --memory 8192 --disk-size 50g --cpus 4 --driver=hyperkit
+
     - name: Ensure kubectl is installed
       package:
         name: kubectl
@@ -20,24 +23,11 @@
     - name: Deploy kibana
       shell: kubectl apply -f kibana
 
-    - name: Satrt kibana
-      shell: kubectl port-forward service/kibana 9200 >/dev/null 2>&1 &
+    - name: Start kibana
+      shell: kubectl port-forward service/kibana 5601:5601 >/dev/null 2>&1 &
 
     - name: Setup index templates and dashboards
       shell: kubectl apply -f beats-index
 
-
-
-     # - name: Check if kubectl is installed
-     #   shell: kubectl version
-
-
-
-
-     # - name: Stop ypbind to add local users
-     #   with_items: "{{ inventory_hostname }}"
-     #   when: not item is search ("nsdiag.*sjc.*") #For skipping nsdiag[1-2].sjc servers from this task
-     #   service:
-     #     name: ypbind
-     #     state: stopped
-     #   ignore_errors: yes
+    - name: Setup filebeat and metricbeat daemons
+      shell: kubectl apply -f beats-agents
